@@ -1,0 +1,86 @@
+import math
+
+data = []
+x_float = []
+y_float = []
+s_x2 = 0
+s_y2 = 0
+
+check = input("if your graph look like <kx>?") # yes or no
+
+# records should be presented as "x y"
+# set the last one record "0"
+while True:
+    record = input().split()
+    if record[0] == '0':
+        break
+    data.append(record)
+
+f = 0
+for i in range(len(data)):
+    try:
+        for j in range(len(data[i])):
+            if f % 2 == 0:
+                x_float.append(float(data[i][j]))
+                s_x2 += (float(data[i][j])) ** 2
+                f += 1
+            else:
+                y_float.append(float(data[i][j]))
+                s_y2 += (float(data[i][j])) ** 2
+                f += 1
+    except ValueError:
+        if f % 2 == 0:
+            f += 2
+        else:
+            f += 1
+        print('z')
+        continue
+
+x_sr = sum(x_float) / len(x_float)
+y_sr = sum(y_float)/ len(y_float)
+
+s_xy = 0
+for i in range(len(x_float)): #y_float
+    s_xy += x_float[i] * y_float[i]
+
+sr_xy = s_xy / len(x_float)
+sr_x2 = s_x2 / len(x_float)
+sr_y2 = s_y2 / len(y_float)
+
+
+# y = kx + b
+# k = (<xy> - <x><y>)/ (<x^2> - <x> ^ 2)
+# b = <y> - k<x>
+
+if check == "no":
+    k = (sr_xy - x_sr * y_sr) / (sr_x2 - x_sr ** 2)
+    b = y_sr - k * x_sr
+    print(f"k = {k}, b = {b}")
+    sigma_k = (1 / math.sqrt(len(x_float))) * math.sqrt(((sr_y2 - math.pow(y_sr, 2)) / (sr_x2 - math.pow(x_sr, 2)))
+                                                        - k ** 2)
+    sigma_b = sigma_k * math.sqrt(sr_x2 - math.pow(x_sr, 2))
+else:
+    k = sr_xy / sr_x2
+    print(f"k = {k}")
+    sigma_k = (1 / math.sqrt(len(x_float))) * math.sqrt((sr_y2 / sr_x2) - k ** 2)
+
+if check == 'no':
+    print(f"sigma_k = {sigma_k}, sigma_b = {sigma_b}")
+else:
+    print(f"sigma_k = {sigma_k}")
+
+#graph
+
+import matplotlib.pyplot as plt
+
+fig, (axs1) = plt.subplots(nrows=1, ncols=1, figsize=(16, 9))
+
+axs1.plot(x_float, y_float, marker= 'o', c='g')
+axs1.set_title("$Graph 1$", fontsize=20)
+axs1.set_ylabel("y")
+axs1.set_xlabel("x")
+
+axs1.grid(which = 'major')
+axs1.grid(which = 'minor', linestyle=':')
+
+plt.show()
